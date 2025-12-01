@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     
     steps:
     - name: Checkout code
@@ -29,23 +31,21 @@ jobs:
         name: bajaj-qualifier-jar
         path: target/*.jar
         
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
+    - name: Create Release and Upload JAR
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v1.0.0
+        name: Bajaj Qualifier v1.0.0
+        files: target/bajaj-qualifier-1.0.0.jar
+        body: |
+          ## Bajaj Finserv Health - JAVA Qualifier
+          
+          **Candidate:** Akash Jonnalagadda
+          **Registration:** 22BCE20488
+          
+          Download the JAR file and run with:
+          ```
+          java -jar bajaj-qualifier-1.0.0.jar
+          ```
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: v1.0.0-${{ github.run_number }}
-        release_name: Release v1.0.0-${{ github.run_number }}
-        draft: false
-        prerelease: false
-        
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./target/bajaj-qualifier-1.0.0.jar
-        asset_name: bajaj-qualifier-1.0.0.jar
-        asset_content_type: application/java-archive
